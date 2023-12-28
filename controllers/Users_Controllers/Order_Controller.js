@@ -7,6 +7,7 @@ const { v4: uuidv4 } = require("uuid");
 const generateOrderId = require("order-id")("key");
 const verifyRazerPay = require("../../utils/razorPay");
 const Razorpay = require("razorpay");
+const Details_Schema = require('../../modals/UserModals/Details')
 // create new order
 const createNewOrder = async (req, res) => {
   console.log(req.body.products);
@@ -435,10 +436,17 @@ const makePaymentOrder = async (req, res) => {
       res.status(400).json({ message: "No product found !!" });
     }
 
+
+    const findRazorpayDetail = await Details_Schema.findOne().select(
+      "razorpay_is_installed razorpay_key_id razorpay_key_secret"
+    );
+ 
     const instance = new Razorpay({
-      key_id: process.env.KEY_ID,
-      key_secret: process.env.KEY_SECRET,
+      key_id: findRazorpayDetail.razorpay_key_id,
+      key_secret: findRazorpayDetail.razorpay_key_secret,
     });
+
+    console.log('razorpay data =======> ', findRazorpayDetail.razorpay_key_id, findRazorpayDetail.razorpay_key_secret)
 
     let order;
     let totalAmount = order_total.replace("₹", "");
@@ -472,11 +480,11 @@ const paymentDone = async (req, res) => {
       order_total,
     } = req.body;
 
-    console.log(
-      "id================> ",
-      // currentUser,
-      product
-    );
+    // console.log(
+    //   "id================> ",
+    //   currentUser,
+    //   product
+    // );
 
     if (!order_id || !payment_id || !razorpay_signature) {
       return res.status(500).json({ message: "something went wrong !!" });
@@ -502,14 +510,12 @@ const paymentDone = async (req, res) => {
           productArr.push(isProduct);
         } else {
           return res.status(404).json({
-            message: "no product found!! ",
+            message: "no product found!!",
           });
         }
       }
 
       console.log("line 506", isCustomer, productArr);
-
-      // isCustomer.product = [...isCustomer.product, ...productArr]
 
       await isCustomer.save();
 
@@ -549,7 +555,7 @@ const paymentDone = async (req, res) => {
         pincode: isCustomer.pincode        
     });
 
-      console.log("line 524", successPaymentHistory);
+      console.log("line 524==================>", successPaymentHistory);
 
       return res
         .status(200)
@@ -560,6 +566,9 @@ const paymentDone = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
+
+
 
 exports.createNewOrder = createNewOrder;
 exports.getAllOrders = getAllOrders;

@@ -901,6 +901,8 @@ const getRazorpayDetail = async (req, res) => {
       return res
         .status(404)
         .send({ status: false, message: "unauthenticated!!" });
+
+        
     const findAll = await Details_Schema.findOne({ app_id: appId }).select(
       "razorpay_is_installed razorpay_key_id razorpay_key_secret"
     );

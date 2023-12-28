@@ -49,6 +49,7 @@ router.post("/admin/plugin/shiprocket/:app_id",Frontend_Validator,usersCheckAuth
 router.patch("/admin/add/plugin/shiprocket/details/:app_id",Frontend_Validator,usersCheckAuth,Details_Controllers.updateShiprocketDetail)
 // razorpay 
 router.get("/admin/get/plugin/razorpay/detail/:app_id",Frontend_Validator,usersCheckAuth,Details_Controllers.getRazorpayDetail)
+router.get("/admin/get/plugin/razorpay/detail_web/:app_id",Details_Controllers.getRazorpayDetail)
 router.post("/admin/plugin/razorpay/:app_id",Frontend_Validator,usersCheckAuth,Details_Controllers.activateAndDeactiveRazorpay)
 router.patch("/admin/add/plugin/razorpay/details/:app_id",Frontend_Validator,usersCheckAuth,Details_Controllers.updateRazorpayDetail)
 
